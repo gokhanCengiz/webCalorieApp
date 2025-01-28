@@ -1,12 +1,20 @@
-document.getElementById('foodForm').addEventListener('submit', function(event) {
+async function getCalories(foodName) {
+    const apiKey = '94c1567487dc2656936920bdaa3000af';
+    const appId = '2331d15f';
+    const url = `https://api.nutritionix.com/v1_1/search/${foodName}?results=0:1&fields=item_name,nf_calories&appId=${appId}&appKey=${apiKey}`;
+
+    const response = await fetch(url);
+    const data = await response.json();
+    return data.hits[0].fields.nf_calories;
+}
+
+document.getElementById('foodForm').addEventListener('submit', async function(event) {
     event.preventDefault();
 
     const foodName = document.getElementById('foodName').value;
     const foodAmount = parseInt(document.getElementById('foodAmount').value);
 
-    // Burada API'yi kullanarak yiyeceğin kalorisini alabilirsiniz.
-    // Örnek olarak sabit bir kalori değeri kullanıyoruz.
-    const caloriesPer100g = 100; // Bu değeri API'den almalısınız.
+    const caloriesPer100g = await getCalories(foodName);
     const calories = (caloriesPer100g * foodAmount) / 100;
 
     const foodList = document.getElementById('foodList');
